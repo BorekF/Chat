@@ -154,6 +154,8 @@
   </div>
 </div>
 
+<!-- (All your original HTML stays the same) -->
+
 <script>
   let isDark = true; // default dark mode enabled
   let typingElement;
@@ -215,7 +217,12 @@
       typingElement = null;
     }
   }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    addMessage('Bot', 'Cześć! 👋 Jak mogę Ci pomóc w sprawach związanych z nieruchomościami?', 'bot');
+  });
 </script>
+
 
 </body>
 </html>

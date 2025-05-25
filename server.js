@@ -27,12 +27,21 @@ app.post('/chat', async (req, res) => {
 
   try {
     const completion = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: userMessage },
-      ],
-    });
+    model: 'gpt-3.5-turbo',
+    messages: [
+      {
+        role: 'system',
+        content: `You are a chill and friendly real estate expert named Riley. 
+  You speak like a normal person, casually but professionally. 
+  Keep things simple and conversational, not robotic or overly formal. 
+  
+  Only answer questions related to real estate—like buying, selling, renting, investing, home value, neighborhoods, mortgage, or property types. 
+  If someone asks something off-topic, politely steer them back to real estate.`
+      },
+      { role: 'user', content: userMessage },
+    ],
+  });
+
 
     const botMessage = completion.data.choices[0].message.content;
     res.json({ message: botMessage });

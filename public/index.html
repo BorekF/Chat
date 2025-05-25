@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat with GPT</title>
+  <style>
+    :root {
+      --bg: #f4f4f9;
+      --user-bg: #0078ff;
+      --user-text: #fff;
+      --bot-bg: #e0e0e0;
+      --bot-text: #333;
+      --text: #000;
+    }
+
+    body.dark {
+      --bg: #1e1e1e;
+      --user-bg: #4f9eff;
+      --user-text: #fff;
+      --bot-bg: #333;
+      --bot-text: #ddd;
+      --text: #fff;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chat-container {
+      background-color: #fff;
+      width: 100%;
+      max-width: 600px;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 16px;
+      max-width: 80%;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: var(--user-bg);
+      color: var(--user-text);
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: var(--bot-bg);
+      color: var(--bot-text);
+    }
+
+    .typing-indicator {
+      font-style: italic;
+      font-size: 0.9em;
+      color: gray;
+      padding-left: 5px;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    input {
+      flex: 1;
+      padding: 14px 16px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button {
+      padding: 14px 20px;
+      border: none;
+      background-color: #0078ff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #005ecb;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header">
+    <h3>Chat with GPT</h3>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
+  </div>
+  <div class="chat-messages" id="messages"></div>
+  <div class="chat-input">
+    <input id="input" type="text" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  let isDark = false;
+  let typingElement;
+
+  function toggleTheme() {
+    isDark = !isDark;
+    document.body.classList.toggle('dark', isDark);
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    addMessage('You', message, 'user');
+    input.value = '';
+
+    showTypingIndicator();
+
+    try {
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      const botReply = data.message || '[No response from AI]';
+      removeTypingIndicator();
+      addMessage('Bot', botReply, 'bot');
+    } catch (err) {
+      removeTypingIndicator();
+      addMessage('Bot', '[Error contacting server]', 'bot');
+      console.error(err);
+    }
+  }
+
+  function addMessage(sender, text, className) {
+    const messagesDiv = document.getElementById('messages');
+    const message = document.createElement('div');
+    message.className = `message ${className}`;
+    message.textContent = text;
+    messagesDiv.appendChild(message);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function showTypingIndicator() {
+    const messagesDiv = document.getElementById('messages');
+    typingElement = document.createElement('div');
+    typingElement.className = 'typing-indicator bot';
+    typingElement.textContent = 'Bot is typing...';
+    messagesDiv.appendChild(typingElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function removeTypingIndicator() {
+    if (typingElement) {
+      typingElement.remove();
+      typingElement = null;
+    }
+  }
+</script>
+
+</body>
+</html>

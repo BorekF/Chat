@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,7 +35,7 @@
     }
 
     .chat-container {
-      background-color: #fff;
+      background-color: var(--bg);
       width: 100%;
       max-width: 600px;
       height: 90vh;
@@ -44,24 +44,30 @@
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
       overflow: hidden;
-      background-color: var(--bg);
       color: var(--text);
     }
 
     .chat-header {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       padding: 12px 20px;
       border-bottom: 1px solid #ccc;
     }
 
     .theme-toggle {
-      background: none;
-      border: 1px solid #ccc;
-      padding: 6px 12px;
+      background-color: #4f9eff;
+      color: white;
+      border: none;
+      padding: 8px 14px;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: #357de9;
     }
 
     .chat-messages {
@@ -135,11 +141,10 @@
     }
   </style>
 </head>
-<body>
+<body class="dark">
 
 <div class="chat-container">
   <div class="chat-header">
-    <h3>Chat with GPT</h3>
     <button class="theme-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
   </div>
   <div class="chat-messages" id="messages"></div>
@@ -150,7 +155,7 @@
 </div>
 
 <script>
-  let isDark = false;
+  let isDark = true; // default dark mode enabled
   let typingElement;
 
   function toggleTheme() {
